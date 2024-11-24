@@ -193,7 +193,7 @@ void QueenBoard::InitialQueensSetup()
 {
     ClearQueens();
     for (int column = 0; column < Size(); ++column) {
-        PutQueen(column, column);
+        PutQueen(column, rand() % Size());
     }
 }
 

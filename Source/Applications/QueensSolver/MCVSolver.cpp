@@ -1,11 +1,16 @@
 #include "MCVSolver.h"
 
-void MCVSolver::NextStep(QueenBoard& board)
+void MCVSolver::ProcessStep(QueenBoard& board)
 {
     switch (m_curStep) {
+    case Start:
+        m_nextStep = CalcCVs;
+        break;
+
+
     case CalcCVs:
         board.UpdateConflictValues();
-        m_curStep = PickMaxQueenCV;
+        m_nextStep = PickMaxQueenCV;
         break;
 
     case PickMaxQueenCV:
@@ -19,7 +24,7 @@ void MCVSolver::NextStep(QueenBoard& board)
         }
 
         if (maxCV == 0) {
-            m_curStep = Win;
+            m_nextStep = Win;
             break;
         }
 
@@ -32,7 +37,7 @@ void MCVSolver::NextStep(QueenBoard& board)
         }
 
         m_pickedQueen = maxCVColumns[rand() % maxCVColumns.size()];
-        m_curStep = FindMinEmptyCV;
+        m_nextStep = FindMinEmptyCV;
         break;
     }
 
@@ -59,7 +64,7 @@ void MCVSolver::NextStep(QueenBoard& board)
         }
 
         m_moveToRow = minCVRows[rand() % minCVRows.size()];
-        m_curStep = Move;
+        m_nextStep = Move;
         break;
     }
 
@@ -67,11 +72,17 @@ void MCVSolver::NextStep(QueenBoard& board)
     {
         auto pickedQueen = board.GetQueenInColumn(m_pickedQueen);
         board.MoveQueen(pickedQueen.row, pickedQueen.column, m_moveToRow, pickedQueen.column);
-        m_curStep = CalcCVs;
+        m_nextStep = CalcCVs;
         break;
     }
 
     case Win:
+        m_nextStep = Win;
         break;
     }
+}
+
+void MCVSolver::NextStep(QueenBoard& board)
+{
+    m_curStep = m_nextStep;
 }
