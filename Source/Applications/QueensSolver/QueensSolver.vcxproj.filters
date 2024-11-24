@@ -1,0 +1,59 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="imgui">
+      <UniqueIdentifier>{eeb5a031-b1c1-492f-bd1d-fa06646b9a43}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\Libraries\3rdparty\imgui\imgui.cpp">
+      <Filter>imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Libraries\3rdparty\imgui\imgui_draw.cpp">
+      <Filter>imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Libraries\3rdparty\imgui\backends\imgui_impl_glfw.cpp">
+      <Filter>imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Libraries\3rdparty\imgui\backends\imgui_impl_opengl3.cpp">
+      <Filter>imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Libraries\3rdparty\imgui\imgui_tables.cpp">
+      <Filter>imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Libraries\3rdparty\imgui\imgui_widgets.cpp">
+      <Filter>imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="QueensSolver.cpp" />
+    <ClCompile Include="MCVSolver.cpp" />
+    <ClCompile Include="QueenBoard.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\Libraries\3rdparty\imgui\imconfig.h">
+      <Filter>imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Libraries\3rdparty\imgui\imgui.h">
+      <Filter>imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Libraries\3rdparty\imgui\backends\imgui_impl_glfw.h">
+      <Filter>imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Libraries\3rdparty\imgui\backends\imgui_impl_opengl3.h">
+      <Filter>imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Libraries\3rdparty\imgui\imgui_internal.h">
+      <Filter>imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Libraries\3rdparty\imgui\imstb_rectpack.h">
+      <Filter>imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Libraries\3rdparty\imgui\imstb_textedit.h">
+      <Filter>imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Libraries\3rdparty\imgui\imstb_truetype.h">
+      <Filter>imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="MCVSolver.h" />
+    <ClInclude Include="QueenBoard.h" />
+  </ItemGroup>
+</Project>
