@@ -1,4 +1,6 @@
 #include "QueenBoard.h"
+#include <chrono>
+#include <unordered_map>
 
 bool operator<(const QueenBoard::Coord& lhs, const QueenBoard::Coord& rhs)
 {
@@ -156,15 +158,36 @@ void QueenBoard::CalcConflictValuesDiag()
 
 void QueenBoard::CalcConflictValuesColor()
 {
-
-    int conflictValue = 0;
     for (const auto& queen : m_queens) {
         uint32_t colorQueen = m_boardColor[queen.row][queen.column];
         for (int row = 0; row < Size(); ++row) {
             for (int column = 0; column < Size(); ++column) {
-                if (queen.row != row && queen.column != column) {
+                if (queen.row != row || queen.column != column) {
                     if (m_boardColor[row][column] == colorQueen) {
                         m_boardCV[row][column]++;
+                    }
+                }
+            }
+        }
+    }
+
+    std::unordered_map<uint32_t, bool> colorMap;
+    for (int row = 0; row < Size(); ++row) {
+        for (int column = 0; column < Size(); ++column) {
+            colorMap[m_boardColor[row][column]] = false;
+        }
+    }
+    for (const auto& queen : m_queens) {
+        uint32_t colorQueen = m_boardColor[queen.row][queen.column];
+        colorMap[colorQueen] = true;
+    }
+
+    for (const auto& color : colorMap) {
+        if (!color.second) {
+            for (int row = 0; row < Size(); ++row) {
+                for (int column = 0; column < Size(); ++column) {
+                    if (m_boardColor[row][column] == color.first) {
+                        m_boardCV[row][column] = 0;
                     }
                 }
             }
@@ -192,8 +215,9 @@ void QueenBoard::UpdateConflictValues()
 void QueenBoard::InitialQueensSetup()
 {
     ClearQueens();
+    srand(static_cast<unsigned int>(std::chrono::system_clock::now().time_since_epoch().count()));
     for (int column = 0; column < Size(); ++column) {
-        PutQueen(column, rand() % Size());
+        PutQueen(rand() % Size(), column);
     }
 }
 

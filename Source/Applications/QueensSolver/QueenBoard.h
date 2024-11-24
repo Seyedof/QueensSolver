@@ -23,7 +23,7 @@ public:
     const std::vector<std::vector<int>>& GetBoardCV() { return m_boardCV; }
     const std::vector<std::vector<uint32_t>>& GetBoardColor() { return m_boardColor; }
     void SetBoardColor(int row, int column, uint32_t color);
-    size_t Size() { return m_boardCV.size(); }
+    int Size() { return static_cast<int>(m_boardCV.size()); }
     bool IsOccupied(int row, int column);
     void CalcConflictValues();
     void CalcConflictValuesHorz();

@@ -155,7 +155,7 @@
     <ClCompile Include="..\..\Libraries\3rdparty\imgui\imgui_widgets.cpp" />
     <ClCompile Include="MCVSolver.cpp" />
     <ClCompile Include="QueenBoard.cpp" />
-    <ClCompile Include="QueensSolver.cpp" />
+    <ClCompile Include="QueensSolverApp.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\Libraries\3rdparty\imgui\backends\imgui_impl_glfw.h" />

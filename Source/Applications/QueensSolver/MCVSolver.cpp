@@ -44,7 +44,6 @@ void MCVSolver::ProcessStep(QueenBoard& board)
     case FindMinEmptyCV:
     {
         auto pickedQueen = board.GetQueenInColumn(m_pickedQueen);
-        //int maxCV = 0;
         int minCV = board.Size() * board.Size();
         for (size_t row = 0; row < board.Size(); ++row) {
             if (row != pickedQueen.row) {
@@ -55,7 +54,7 @@ void MCVSolver::ProcessStep(QueenBoard& board)
         }
 
         std::vector<int> minCVRows;
-        for (size_t row = 0; row < board.Size(); ++row) {
+        for (int row = 0; row < board.Size(); ++row) {
             if (row != pickedQueen.row) {
                 if (board.GetBoardCV()[row][pickedQueen.column] == minCV) {
                     minCVRows.push_back(row);

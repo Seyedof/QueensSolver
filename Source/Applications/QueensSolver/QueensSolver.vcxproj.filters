@@ -24,7 +24,7 @@
     <ClCompile Include="..\..\Libraries\3rdparty\imgui\imgui_widgets.cpp">
       <Filter>imgui</Filter>
     </ClCompile>
-    <ClCompile Include="QueensSolver.cpp" />
+    <ClCompile Include="QueensSolverApp.cpp" />
     <ClCompile Include="MCVSolver.cpp" />
     <ClCompile Include="QueenBoard.cpp" />
   </ItemGroup>

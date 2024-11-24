@@ -88,7 +88,6 @@ bool InitAppContext()
 
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
-    ImGuiIO& io = ImGui::GetIO(); (void)io;
 
     ImGui::StyleColorsDark();
 
@@ -97,8 +96,6 @@ bool InitAppContext()
     ImGui_ImplGlfw_InstallEmscriptenCallbacks(window, "#canvas");
 #endif
     ImGui_ImplOpenGL3_Init(glsl_version);
-
-    ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 
     return true;
 }
@@ -140,14 +137,15 @@ void VisualizeBoard(QueenBoard& board, MCVSolver& mcvSolver)
     ImGui::BeginDisabled(s_running);
     ImGui::Checkbox("Paint The Board", &s_paintMode);
     static ImVec4 s_color = ImColor(palette[12]);
-    if (s_paintMode) {
+    ImGui::BeginDisabled(!s_paintMode);
+    if (1) {
         ImGui::ColorButton("Color1", s_color, 0, ImVec2{ 60, 60 });
         ImGui::SameLine();
         ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(0, 0));
         ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(1, 1));
         ImGui::PushStyleColor(ImGuiCol_Button, 0x00000000);
         ImGui::PushStyleColor(ImGuiCol_ButtonHovered, 0xff0000ff);
-        for (size_t i = 0; i < palette.size(); ++i) {
+        for (int i = 0; i < static_cast<int>(palette.size()); ++i) {
             ImGui::PushID(i);
             if (ImGui::ImageButton("", 0, { 30, 30 }, { 0, 0 }, { 0, 0 }, ImColor(palette[i]), ImColor(0x00ffffff))) {
                 s_color = ImColor(palette[i]);
@@ -160,10 +158,12 @@ void VisualizeBoard(QueenBoard& board, MCVSolver& mcvSolver)
         ImGui::PopStyleVar(2);
     }
     ImGui::EndDisabled();
+    ImGui::EndDisabled();
 
     ImGui::NewLine();
     ImGui::BeginDisabled(board.Size() == 0);
-    if (ImGui::Button("Start")) {
+    std::string buttonCaption = s_running ? "Stop" : "Start";
+    if (ImGui::Button(buttonCaption.c_str())) {
         s_running = !s_running;
         if (s_running) {
             s_paintMode = false;
@@ -190,16 +190,22 @@ void VisualizeBoard(QueenBoard& board, MCVSolver& mcvSolver)
     ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(1, 1));
     ImGui::PushStyleColor(ImGuiCol_Button, 0xffffffff);
     ImGui::PushStyleColor(ImGuiCol_ButtonHovered, 0xff0000ff);
-    ImGui::PushStyleColor(ImGuiCol_Text, 0xff0000ff);
+
     ImVec2 boardStartPoint = ImGui::GetCursorPos() + ImGui::GetWindowPos() + ImVec2(-ImGui::GetScrollX(), -ImGui::GetScrollY());
-    for (size_t row = 0; row < board.Size(); ++row) {
-        for (size_t column = 0; column < board.Size(); ++column) {
-            ImGui::PushID(static_cast<int>(row * board.Size() + column) + palette.size());
+    for (int row = 0; row < board.Size(); ++row) {
+        for (int column = 0; column < board.Size(); ++column) {
+            ImGui::PushID(row * board.Size() + column + static_cast<int>(palette.size()));
             if (s_running) {
                 ImVec2 prevPos = ImGui::GetCursorPos();
                 ImGui::ImageButton("", 0, { BOARD_CELL_SIZE, BOARD_CELL_SIZE }, { 0, 0 }, { 0, 0 }, ImColor(board.GetBoardColor()[row][column]), ImColor(0x00ffffff));
                 std::string conflictValue = std::to_string(board.GetBoardCV()[row][column]);
-                ImGui::GetWindowDrawList()->AddText(prevPos + ImGui::GetWindowPos() + ImVec2(-ImGui::GetScrollX(), -ImGui::GetScrollY()) + ImVec2(5, 35), 0xff000000, conflictValue.c_str());
+
+                uint32_t textColor = 0xff000000;
+                if (mcvSolver.GetCurStep() == MCVSolver::Step::CalcCVs) {
+                    textColor = 0xff8000a0;
+                }
+                ImGui::GetWindowDrawList()->AddText(prevPos + ImGui::GetWindowPos() + ImVec2(-ImGui::GetScrollX(), -ImGui::GetScrollY()) + ImVec2(5, 35), textColor, conflictValue.c_str());
+                
                 if (board.IsOccupied(row, column)) {
                     ImGui::SetWindowFontScale(3.0f);
                     ImGui::GetWindowDrawList()->AddText(prevPos + ImGui::GetWindowPos() + ImVec2(-ImGui::GetScrollX(), -ImGui::GetScrollY()) + ImVec2(15, 5), 0xff000000, "*");
@@ -210,17 +216,15 @@ void VisualizeBoard(QueenBoard& board, MCVSolver& mcvSolver)
                     auto pickedQueen = board.GetQueenInColumn(mcvSolver.GetPickedQueen());
 
                     if (row == pickedQueen.row && column == pickedQueen.column) {
-                        ImVec2 minPt = prevPos + ImGui::GetWindowPos() + ImVec2(-ImGui::GetScrollX(), -ImGui::GetScrollY());
-                        ImVec2 maxPt = minPt + ImVec2(BOARD_CELL_SIZE, BOARD_CELL_SIZE);
-                        ImGui::GetWindowDrawList()->AddRect(minPt, maxPt, 0xff0000ff);
+                        ImVec2 center = prevPos + ImGui::GetWindowPos() + ImVec2(-ImGui::GetScrollX(), -ImGui::GetScrollY()) + ImVec2(BOARD_CELL_SIZE / 2.0f + 1.0f, BOARD_CELL_SIZE / 2.0 + 2.0f);
+                        ImGui::GetWindowDrawList()->AddCircle(center, BOARD_CELL_SIZE * 0.35f, 0xa00000ff, 0, 3.0f);
                     }
                 }
                 if (mcvSolver.GetCurStep() == MCVSolver::Step::FindMinEmptyCV) {
                     auto pickedQueen = board.GetQueenInColumn(mcvSolver.GetPickedQueen());
                     if (row == mcvSolver.GetMoveToRow() && column == pickedQueen.column) {
-                        ImVec2 minPt = prevPos + ImGui::GetWindowPos() + ImVec2(-ImGui::GetScrollX(), -ImGui::GetScrollY());
-                        ImVec2 maxPt = minPt + ImVec2(BOARD_CELL_SIZE, BOARD_CELL_SIZE);
-                        ImGui::GetWindowDrawList()->AddRect(minPt, maxPt, 0xff00ff00);
+                        ImVec2 center = prevPos + ImGui::GetWindowPos() + ImVec2(-ImGui::GetScrollX(), -ImGui::GetScrollY()) + ImVec2(BOARD_CELL_SIZE / 2.0f + 1.0f, BOARD_CELL_SIZE / 2.0 + 2.0f);
+                        ImGui::GetWindowDrawList()->AddCircle(center, BOARD_CELL_SIZE * 0.35f, 0xa000ff00, 0, 3.0f);
                     }
                 }
 
@@ -233,7 +237,7 @@ void VisualizeBoard(QueenBoard& board, MCVSolver& mcvSolver)
         }
         ImGui::NewLine();
     }
-    ImGui::PopStyleColor(3);
+    ImGui::PopStyleColor(2);
     ImGui::PopStyleVar(2);
 
     if (s_paintMode) {
@@ -244,7 +248,7 @@ void VisualizeBoard(QueenBoard& board, MCVSolver& mcvSolver)
             if (x >= 0 && y >= 0 && x < board.Size() * BOARD_CELL_SIZE && y < board.Size() * BOARD_CELL_SIZE) {
                 x /= BOARD_CELL_SIZE;
                 y /= BOARD_CELL_SIZE;
-                board.SetBoardColor(y, x, ImColor(s_color));
+                board.SetBoardColor(static_cast<int>(y), static_cast<int>(x), ImColor(s_color));
             }
         }
     }
@@ -263,8 +267,6 @@ int main(int, char**)
 
     QueenBoard board;
     MCVSolver mcvSolver;
-
-    auto& io = ImGui::GetIO();
 
 #ifdef __EMSCRIPTEN__
     io.IniFilename = nullptr;
