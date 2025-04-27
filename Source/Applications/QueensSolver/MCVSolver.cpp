@@ -5,6 +5,8 @@ void MCVSolver::ProcessStep(QueenBoard& board)
     switch (m_curStep) {
     case Start:
         m_nextStep = CalcCVs;
+        m_moveCount = 0;
+        board.InitialQueensSetup();
         break;
 
 
@@ -72,6 +74,11 @@ void MCVSolver::ProcessStep(QueenBoard& board)
         auto pickedQueen = board.GetQueenInColumn(m_pickedQueen);
         board.MoveQueen(pickedQueen.row, pickedQueen.column, m_moveToRow, pickedQueen.column);
         m_nextStep = CalcCVs;
+        m_moveCount++;
+        if (m_moveCount > board.Size() * 3) {
+            Reset();
+            m_nextStep = Start;
+        }
         break;
     }
 

@@ -25,5 +25,6 @@ private:
     Step m_nextStep = Start;
     int m_pickedQueen;
     int m_moveToRow;
+    int m_moveCount = 0;
 };
 

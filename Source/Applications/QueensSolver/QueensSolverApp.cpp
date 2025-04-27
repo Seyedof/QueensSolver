@@ -67,24 +67,16 @@ bool InitAppContext()
         return false;
     }
 
-#if defined(__APPLE__)
-    const char* glsl_version = "#version 150";
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
-    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
-#else
     const char* glsl_version = "#version 130";
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
-#endif
 
     window = glfwCreateWindow(1280, 720, "Linkedin Queens Problem Solver", nullptr, nullptr);
     if (window == nullptr) {
         return false;
     }
     glfwMakeContextCurrent(window);
-    glfwSwapInterval(1);
+    glfwSwapInterval(0);
 
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
@@ -110,7 +102,7 @@ void VisualizeBoard(QueenBoard& board, MCVSolver& mcvSolver)
 
     ImGui::SetNextWindowPos(ImVec2(0.0f, 0.0f));
     ImGui::Begin("Queens Algo Visualize", nullptr, flags);
-    static int s_boardSize = 8;
+    static int s_boardSize = 9;
     ImGui::SetNextItemWidth(264);
     ImGui::SliderInt("Board Size", &s_boardSize, 4, 20);
 
